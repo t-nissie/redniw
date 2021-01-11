@@ -8,28 +8,56 @@
 #include "WProgram.h"
 #endif
 
-unsigned int up_down_led(unsigned int bits,
-                         const boolean up_or_down,
-                         const int len,
-                         const int analog_or_digital, /* 0: digital, 1-255: lower value for */
-                         const int pins[])
+class LEDbits
 {
-  unsigned int Max = (1<<(len+1)) - 1;   // Max will be 63, when len=6.
-  if (up_or_down) {
-    if (bits>=Max) bits=0; else bits++;  // count up
-  } else {
-    if (bits==0) bits=Max; else bits--;  // or count down
+ public:
+  LEDbits() : _bits(0), _length(0), _max(0), _analog_or_digital(0) {
   }
-  unsigned int tester=1;
-  for (int i=0; i<len; ++i) {
-    if (bits & tester) {
-      if (analog_or_digital) analogWrite(pins[i],255);               else digitalWrite(pins[i],HIGH);
-    } else {
-      if (analog_or_digital) analogWrite(pins[i],analog_or_digital); else digitalWrite(pins[i],LOW);
+  LEDbits& set_analog_or_digital(const int ad) {
+    _analog_or_digital = ad;
+    return *this;
+  }
+  LEDbits& set_length(const int len) {
+    _length = len;
+    _max = (1<<(len+1)) - 1;   // _max will be 63, when len=6.
+    return *this;
+  }
+  LEDbits& set_pins(const int p[]) {
+    for (int i=0; i<_length; ++i) _pins[i] = p[i];
+    return *this;
+  }
+  LEDbits& init() {
+    _bits = _max;
+    show();
+    return *this;
+  }
+  LEDbits& up() {
+    if (_bits>=_max) _bits=0; else _bits++;
+    show();
+    return *this;
+  }
+  LEDbits& down() {
+    if (_bits==0) _bits=_max; else _bits--;
+    show();
+    return *this;
+  }
+ private:
+  int _bits;
+  int _length;
+  int _max;
+  int _analog_or_digital; //0: digital, 1-255: lower value for analogWrite()
+  int _pins[32];
+  void show() {
+    unsigned int tester=1;
+    for (int i=0; i<_length; ++i) {
+      if (_bits & tester) {
+        if (_analog_or_digital) analogWrite(_pins[i],255);                else digitalWrite(_pins[i],HIGH);
+      } else {
+        if (_analog_or_digital) analogWrite(_pins[i],_analog_or_digital); else digitalWrite(_pins[i],LOW);
+      }
+      tester = tester << 1;
     }
-    tester = tester << 1;
   }
-  return bits;
-}
+};
 
 #endif
