@@ -2,16 +2,16 @@
 #include "LEDbits.h"
 #include <Bounce2.h> //Add Bounce2 through the library manager (Ctrl+Shift+I)
 Bounce       n_wind_bouncer = Bounce();
-LEDbits      n_wind_LED     = LEDbits();
 const int    N_WIND_SW_PIN  = 1;
-const int    N_WIND_PINS[]  = {3,5,6,9,10,11};
-
+LEDbits      n_wind_LED     = LEDbits();
+const int    N_WIND_LENGTH  = 6;
+const int    N_WIND_PINS[N_WIND_LENGTH]  = {3,5,6,9,10,11};
 void setup()
 {
   pinMode(N_WIND_SW_PIN, INPUT_PULLUP);
   n_wind_bouncer.attach(N_WIND_SW_PIN);
   n_wind_bouncer.interval(5);
-  n_wind_LED.set_analog_or_digital(5).set_length(6).set_pins(N_WIND_PINS).init();
+  n_wind_LED.init(N_WIND_LENGTH, N_WIND_PINS);
 }
 
 void loop()

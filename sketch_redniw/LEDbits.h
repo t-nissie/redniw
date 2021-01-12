@@ -8,35 +8,27 @@
 #include "WProgram.h"
 #endif
 
+#include <limits.h>   // for UINT_MAX
+
 class LEDbits
 {
  public:
   LEDbits() : _bits(0), _length(0), _max(0), _analog_or_digital(0) {
   }
 
-  LEDbits& set_analog_or_digital(const int ad) {
-    _analog_or_digital = ad;
-    return *this;
-  }
-
-  LEDbits& set_length(const int len) {
+  LEDbits& init(const int len, const int p[], const int ad=5, const unsigned int val=UINT_MAX) {
     _length = len;
-    _max = (1<<(len+1)) - 1;   // _max will be 63, when len=6.
+    _max = (1<<(_length+1)) - 1;   // _max will be 63, when len=6.
+    _analog_or_digital = ad;
+    for (int i=0; i<_length; ++i) {
+      _pins[i] = p[i];
+      if (_analog_or_digital==0) pinMode(_pins[i], OUTPUT);
+    }          // We do not need initialization for analog output mode pins.
+    set_bits(val);
     return *this;
   }
 
-  LEDbits& set_pins(const int p[]) {
-    for (int i=0; i<_length; ++i) _pins[i] = p[i];
-    return *this;
-  }
-
-  LEDbits& init() {
-    _bits = _max;
-    show();
-    return *this;
-  }
-
-  LEDbits& set_bits(unsigned int val) {
+  LEDbits& set_bits(const unsigned int val) {
     _bits = _max & val;
     show();
     return *this;
