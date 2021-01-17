@@ -13,6 +13,12 @@ LEDbits      thickness_LED     = LEDbits();
 const int    THICKNESS_LENGTH  = 2;
 const int    THICKNESS_PINS[THICKNESS_LENGTH]  = {13,8};
 
+Bounce       spool_bouncer = Bounce();
+const int    SPOOL_SW_PIN  = 0;
+LEDbits      spool_LED     = LEDbits();
+const int    SPOOL_LENGTH  = 3;
+const int    SPOOL_PINS[SPOOL_LENGTH]  = {17,18,19};
+
 void setup()
 {
   pinMode(N_WIND_SW_PIN, INPUT_PULLUP);
@@ -24,6 +30,11 @@ void setup()
   thickness_bouncer.attach(THICKNESS_SW_PIN);
   thickness_bouncer.interval(5);
   thickness_LED.init(THICKNESS_LENGTH, THICKNESS_PINS, 0);
+
+  pinMode(SPOOL_SW_PIN, INPUT_PULLUP);
+  spool_bouncer.attach(SPOOL_SW_PIN);
+  spool_bouncer.interval(5);
+  spool_LED.init(SPOOL_LENGTH, SPOOL_PINS, 0);
 }
 
 void loop()
@@ -33,5 +44,8 @@ void loop()
   }
   if (thickness_bouncer.update() && thickness_bouncer.read()==HIGH) {
     thickness_LED.up();
+  }
+  if (spool_bouncer.update() && spool_bouncer.read()==HIGH) {
+    spool_LED.up();
   }
 }
