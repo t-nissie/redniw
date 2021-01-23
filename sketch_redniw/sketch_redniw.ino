@@ -7,11 +7,6 @@ LEDbits   n_wind_LED    = LEDbits();   // It will be used in both setup() and lo
 const int N_WIND_LENGTH = 6;
 const int N_WIND_PINS[N_WIND_LENGTH] = {3,5,6,9,10,11};
 
-const int THICKNESS_SW_PIN = 12;
-LEDbits   thickness_LED = LEDbits();
-const int THICKNESS_LENGTH = 2;
-const int THICKNESS_PINS[THICKNESS_LENGTH] = {13,8};
-
 const int SPOOL_SW_PIN = 0;
 LEDbits   spool_LED = LEDbits();
 const int SPOOL_LENGTH = 3;
@@ -20,6 +15,7 @@ const int SPOOL_PINS[SPOOL_LENGTH] = {17,18,19};
 const int PP_SW_PIN  = 14;
 Bounce    pp_bouncer = Bounce();   // play and pause
 
+const int NOT_ENABLE = 13;
 const int GUIDE_STEP =  2;
 const int GUIDE_DIR  =  4;
 const int GUIDE_END  = 15;
@@ -36,12 +32,6 @@ void setup()
   n_wind_bouncer.interval(5);
   n_wind_LED.init(N_WIND_LENGTH, N_WIND_PINS);
 
-  pinMode(  THICKNESS_SW_PIN, INPUT_PULLUP);
-  Bounce    thickness_bouncer = Bounce();
-  thickness_bouncer.attach(THICKNESS_SW_PIN);
-  thickness_bouncer.interval(5);
-  thickness_LED.init(THICKNESS_LENGTH, THICKNESS_PINS, 0);
-
   pinMode(  SPOOL_SW_PIN, INPUT_PULLUP);
   Bounce    spool_bouncer = Bounce();
   spool_bouncer.attach(SPOOL_SW_PIN);
@@ -52,10 +42,12 @@ void setup()
   pp_bouncer.attach(PP_SW_PIN);
   pp_bouncer.interval(5);
 
+  pinMode(NOT_ENABLE,OUTPUT);
   pinMode(GUIDE_STEP,OUTPUT);
   pinMode(GUIDE_DIR, OUTPUT);
   pinMode(GUIDE_END,  INPUT); // endstop
 
+  digitalWrite(NOT_ENABLE,0); // enable stepper drivers
   digitalWrite(GUIDE_DIR,0);   // to the endstep direction
   do {
         digitalWrite(GUIDE_STEP,0);
@@ -74,12 +66,10 @@ void setup()
   }
 
   n_wind_LED.set_bits(0);
-  thickness_LED.set_bits(0);
   spool_LED.set_bits(0);
 
   do {
     if (   n_wind_bouncer.update() &&    n_wind_bouncer.read()==HIGH)    n_wind_LED.up();
-    if (thickness_bouncer.update() && thickness_bouncer.read()==HIGH) thickness_LED.up();
     if (    spool_bouncer.update() &&     spool_bouncer.read()==HIGH)     spool_LED.up();
   } while (  !(pp_bouncer.update() &&        pp_bouncer.read()==HIGH)  );
 
@@ -95,11 +85,13 @@ void setup()
       }
     }
   } while (n_wind_LED.down().get_bits());
+
+  digitalWrite(NOT_ENABLE,1); // disenable stepper drivers
 }
 
 void loop()
 {
-  spool_LED.set_bits(0); thickness_LED.set_bits(0);
+  spool_LED.set_bits(0);
   spool_LED.set_bits(1);     delay(100);
   spool_LED.set_bits(2);     delay(100);
   spool_LED.set_bits(4);     delay(100); spool_LED.set_bits(0);
@@ -109,6 +101,4 @@ void loop()
   n_wind_LED.set_bits( 8);   delay(100);
   n_wind_LED.set_bits(16);   delay(100);
   n_wind_LED.set_bits(32);   delay(100); n_wind_LED.set_bits(0);
-  thickness_LED.set_bits(1); delay(100);
-  thickness_LED.set_bits(2); delay(100);
 }
