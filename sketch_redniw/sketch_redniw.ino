@@ -8,10 +8,12 @@ const int N_WIND_LENGTH = 6;
 const int N_WIND_PINS[N_WIND_LENGTH] = {3,5,6,9,10,11};
 
 const int THICKNESS_SW_PIN = 12;
+LEDbits   thickness_LED = LEDbits();
 const int THICKNESS_LENGTH = 2;
 const int THICKNESS_PINS[THICKNESS_LENGTH] = {13,8};
 
 const int SPOOL_SW_PIN = 0;
+LEDbits   spool_LED = LEDbits();
 const int SPOOL_LENGTH = 3;
 const int SPOOL_PINS[SPOOL_LENGTH] = {17,18,19};
 
@@ -36,14 +38,12 @@ void setup()
 
   pinMode(  THICKNESS_SW_PIN, INPUT_PULLUP);
   Bounce    thickness_bouncer = Bounce();
-  LEDbits   thickness_LED = LEDbits();
   thickness_bouncer.attach(THICKNESS_SW_PIN);
   thickness_bouncer.interval(5);
   thickness_LED.init(THICKNESS_LENGTH, THICKNESS_PINS, 0);
 
   pinMode(  SPOOL_SW_PIN, INPUT_PULLUP);
   Bounce    spool_bouncer = Bounce();
-  LEDbits   spool_LED     = LEDbits();
   spool_bouncer.attach(SPOOL_SW_PIN);
   spool_bouncer.interval(5);
   spool_LED.init(SPOOL_LENGTH, SPOOL_PINS, 0);
@@ -82,10 +82,33 @@ void setup()
     if (thickness_bouncer.update() && thickness_bouncer.read()==HIGH) thickness_LED.up();
     if (    spool_bouncer.update() &&     spool_bouncer.read()==HIGH)     spool_LED.up();
   } while (  !(pp_bouncer.update() &&        pp_bouncer.read()==HIGH)  );
+
+  do {
+    for (int j=0; j<2; j++) {
+      digitalWrite(GUIDE_DIR,j);   // Set Dir
+      delay(1000);             // Wait 2 seconds
+      for (int i = 0; i < n_2_0; i++) {
+        for (int k = 0; k < 2; k++) {
+          digitalWrite(GUIDE_STEP,k);
+          delayMicroseconds(50);
+        }
+      }
+    }
+  } while (n_wind_LED.down().get_bits());
 }
 
 void loop()
 {
-  n_wind_LED.down();
-  delay(500);
+  spool_LED.set_bits(0); thickness_LED.set_bits(0);
+  spool_LED.set_bits(1);     delay(100);
+  spool_LED.set_bits(2);     delay(100);
+  spool_LED.set_bits(4);     delay(100); spool_LED.set_bits(0);
+  n_wind_LED.set_bits( 1);   delay(100);
+  n_wind_LED.set_bits( 2);   delay(100);
+  n_wind_LED.set_bits( 4);   delay(100);
+  n_wind_LED.set_bits( 8);   delay(100);
+  n_wind_LED.set_bits(16);   delay(100);
+  n_wind_LED.set_bits(32);   delay(100); n_wind_LED.set_bits(0);
+  thickness_LED.set_bits(1); delay(100);
+  thickness_LED.set_bits(2); delay(100);
 }
