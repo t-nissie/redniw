@@ -45,10 +45,10 @@ void setup()
   pinMode(NOT_ENABLE,OUTPUT);
   pinMode(GUIDE_STEP,OUTPUT);
   pinMode(GUIDE_DIR, OUTPUT);
-  pinMode(GUIDE_END,  INPUT); // endstop
+  pinMode(GUIDE_END,  INPUT_PULLUP); // endstop
 
   digitalWrite(NOT_ENABLE,0); // enable stepper drivers
-  digitalWrite(GUIDE_DIR,0);   // to the endstep direction
+  digitalWrite(GUIDE_DIR,0);   // to the endstop direction
   do {
         digitalWrite(GUIDE_STEP,0);
         delayMicroseconds(1000);
