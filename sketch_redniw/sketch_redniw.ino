@@ -23,6 +23,10 @@ const int    GUIDE_DIR  =  4;
 const int    GUIDE_MODE  = 8;
 const double GUIDE_1RND  = 40.0; // mm/round
 
+const int    SPOOL_STEP = 16;
+const int    SPOOL_DIR  =  7;
+const int    SPOOL_MODE = 32;
+
 const double theta_step = 1.8;
 const int n_127 = (127.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 const int n_102 = (102.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
@@ -68,6 +72,7 @@ void setup()
     }
   }
 
+  digitalWrite(NOT_ENABLE,1); // disable stepper drivers
   n_wind_LED.set_bits(0);
   spool_LED.set_bits(0);
 
@@ -76,10 +81,10 @@ void setup()
     if (    spool_bouncer.update() &&     spool_bouncer.read()==HIGH)     spool_LED.up();
   } while (  !(pp_bouncer.update() &&        pp_bouncer.read()==HIGH)  );
 
+  digitalWrite(NOT_ENABLE,0); // eable stepper drivers
   do {
     for (int j=0; j<2; j++) {
       digitalWrite(GUIDE_DIR,j);   // Set Dir
-      delay(1000);             // Wait 2 seconds
       for (int i = 0; i < n_102; i++) {
         for (int k = 0; k < 2; k++) {
           digitalWrite(GUIDE_STEP,k);
