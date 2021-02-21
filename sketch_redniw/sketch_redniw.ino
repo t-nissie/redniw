@@ -16,13 +16,16 @@ const int PP_SW_PIN  = 14;
 Bounce    pp_bouncer = Bounce();   // play and pause
 
 const int NOT_ENABLE = 13;
-const int GUIDE_STEP =  2;
-const int GUIDE_DIR  =  4;
 const int GUIDE_END  = 15;
+
+const int    GUIDE_STEP =  2;
+const int    GUIDE_DIR  =  4;
+const int    GUIDE_MODE  = 8;
+const double GUIDE_1RND  = 40.0; // mm/round
+
 const double theta_step = 1.8;
-const int n_mode  = 8;
-const int n_2_0 = 2.0 * n_mode * 360.0 / theta_step;
-const int n_2_5 = 2.5 * n_mode * 360.0 / theta_step;
+const int n_127 = (127.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const int n_102 = (102.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 
 void setup()
 {
@@ -58,7 +61,7 @@ void setup()
 
   delay(1000); // Wait 1 seconds
   digitalWrite(GUIDE_DIR,1); // Set Dir
-  for (int i = 0; i < n_2_5; i++) {
+  for (int i = 0; i < n_127; i++) {
     for (int k = 0; k < 2; k++) {
       digitalWrite(GUIDE_STEP,k);
       delayMicroseconds(500);
@@ -77,7 +80,7 @@ void setup()
     for (int j=0; j<2; j++) {
       digitalWrite(GUIDE_DIR,j);   // Set Dir
       delay(1000);             // Wait 2 seconds
-      for (int i = 0; i < n_2_0; i++) {
+      for (int i = 0; i < n_102; i++) {
         for (int k = 0; k < 2; k++) {
           digitalWrite(GUIDE_STEP,k);
           delayMicroseconds(50);
