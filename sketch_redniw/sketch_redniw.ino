@@ -20,16 +20,16 @@ const int GUIDE_END  = 15;
 
 const int    GUIDE_STEP =  2;
 const int    GUIDE_DIR  =  4;
-const int    GUIDE_MODE  = 8;
+const int    GUIDE_MODE = 32;
 const double GUIDE_1RND  = 40.0; // mm/round
 
 const int    SPOOL_STEP = 16;
 const int    SPOOL_DIR  =  7;
-const int    SPOOL_MODE = 32;
+const int    SPOOL_MODE =  4;
 
 const double theta_step = 1.8;
-const int n_127 = (127.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
-const int n_102 = (102.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const int n_127 =          (127.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const int n_102 = 16320; //(102.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 
 void setup()
 {
@@ -53,14 +53,16 @@ void setup()
   pinMode(GUIDE_STEP,OUTPUT);
   pinMode(GUIDE_DIR, OUTPUT);
   pinMode(GUIDE_END,  INPUT_PULLUP); // endstop
+  pinMode(SPOOL_STEP,OUTPUT);
+  pinMode(SPOOL_DIR, OUTPUT);
 
   digitalWrite(NOT_ENABLE,0); // enable stepper drivers
   digitalWrite(GUIDE_DIR,0);   // to the endstop direction
   do {
         digitalWrite(GUIDE_STEP,0);
-        delayMicroseconds(1000);
+        delayMicroseconds(250);
         digitalWrite(GUIDE_STEP,1);
-        delayMicroseconds(1000);
+        delayMicroseconds(250);
   } while (digitalRead(GUIDE_END));
 
   delay(1000); // Wait 1 seconds
@@ -68,7 +70,7 @@ void setup()
   for (int i = 0; i < n_127; i++) {
     for (int k = 0; k < 2; k++) {
       digitalWrite(GUIDE_STEP,k);
-      delayMicroseconds(500);
+      delayMicroseconds(125);
     }
   }
 
@@ -82,13 +84,16 @@ void setup()
   } while (  !(pp_bouncer.update() &&        pp_bouncer.read()==HIGH)  );
 
   digitalWrite(NOT_ENABLE,0); // eable stepper drivers
+  digitalWrite(SPOOL_DIR,0);
   do {
     for (int j=0; j<2; j++) {
       digitalWrite(GUIDE_DIR,j);   // Set Dir
       for (int i = 0; i < n_102; i++) {
+        if ((i%4)==0) digitalWrite(SPOOL_STEP,0);
+        if ((i%4)==2) digitalWrite(SPOOL_STEP,1);
         for (int k = 0; k < 2; k++) {
           digitalWrite(GUIDE_STEP,k);
-          delayMicroseconds(50);
+          delayMicroseconds(20);
         }
       }
     }
