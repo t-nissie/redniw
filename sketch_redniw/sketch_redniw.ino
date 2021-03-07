@@ -28,8 +28,8 @@ const int    SPOOL_DIR  =  7;
 const int    SPOOL_MODE = 16;
 
 const double theta_step = 1.8;
-const int n_132  =     (132.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
-const int n2_120 = 2 * (120.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const int  n_138  =      (138.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const long n2_119  = 2 * (119.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 
 void setup()
 {
@@ -67,7 +67,7 @@ void setup()
 
   delay(1000); // Wait 1 seconds
   digitalWrite(GUIDE_DIR,1); // Set Dir
-  for (int i = 0; i < n_132; i++) {
+  for (int i = 0; i < n_138; i++) {
     for (int k = 0; k < 2; k++) {
       digitalWrite(GUIDE_STEP,k);
       delayMicroseconds(125);
@@ -87,18 +87,18 @@ void setup()
   digitalWrite(SPOOL_DIR,0);
   int dir = 0;
   int sig = 0;
-  int acm = 0;
+  long acm = 0;
+  digitalWrite(GUIDE_DIR,0);
   while(1) {
-    if (acm==0) {
-      digitalWrite(GUIDE_DIR,dir);   // Set Dir
-      dir ^= 1;
+    if (++acm>n2_119) {
+      acm = 1;
+      digitalWrite(GUIDE_DIR,dir^=1);   // Set Dir
     }
-    acm = (++acm) % n2_120;
-    digitalWrite(SPOOL_STEP,sig);
-    digitalWrite(GUIDE_STEP,sig);
-    sig ^= 1;
+    digitalWrite(SPOOL_STEP, sig^=1);
+    digitalWrite(GUIDE_STEP, sig);
+    delayMicroseconds(15);
   }
-  //while (n_wind_LED.down().get_bits());
+
   digitalWrite(NOT_ENABLE,1); // disenable stepper drivers
 }
 
