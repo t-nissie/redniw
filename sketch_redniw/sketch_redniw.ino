@@ -28,7 +28,7 @@ const int    SPOOL_DIR  =  7;
 const int    SPOOL_MODE = 16;
 
 const double theta_step = 1.8;
-const int  n_138  =      (138.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
+const int  n_123  =      (123.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 const long n2_119  = 2 * (119.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
 
 void setup()
@@ -67,7 +67,7 @@ void setup()
 
   delay(1000); // Wait 1 seconds
   digitalWrite(GUIDE_DIR,1); // Set Dir
-  for (int i = 0; i < n_138; i++) {
+  for (int i = 0; i < n_123; i++) {
     for (int k = 0; k < 2; k++) {
       digitalWrite(GUIDE_STEP,k);
       delayMicroseconds(125);
