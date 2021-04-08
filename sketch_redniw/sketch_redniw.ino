@@ -25,7 +25,7 @@ const double GUIDE_1RND  = 40.0; // mm/round
 
 const int    SPOOL_STEP = 16;
 const int    SPOOL_DIR  =  7;
-const int    SPOOL_MODE = 16;
+const int    SPOOL_MODE = 32;
 
 const double theta_step = 1.8;
 const int  n_123  =      (123.0/GUIDE_1RND) * GUIDE_MODE * 360.0 / theta_step;
@@ -94,9 +94,11 @@ void setup()
       acm = 1;
       digitalWrite(GUIDE_DIR,dir^=1);   // Set Dir
     }
-    digitalWrite(SPOOL_STEP, sig^=1);
-    digitalWrite(GUIDE_STEP, sig);
-    delayMicroseconds(15);
+    digitalWrite(SPOOL_STEP, 0);
+    delayMicroseconds(6);
+    digitalWrite(SPOOL_STEP, 1);
+    delayMicroseconds(6);
+    digitalWrite(GUIDE_STEP, sig^=1);
   }
 
   digitalWrite(NOT_ENABLE,1); // disenable stepper drivers
