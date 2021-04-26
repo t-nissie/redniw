@@ -1,18 +1,18 @@
 /* -*-C++-*- sketch_redniw.ino */
 #include <Bounce2.h> //Add Bounce2 through the library manager (Ctrl+Shift+I)
-const int PP_SW_PIN  = 14;
+const int PP_SW_PIN  =  9;
 Bounce    pp_bouncer = Bounce();   // play and pause
 
-const int NOT_ENABLE = 13;
-const int GUIDE_END  = 15;
+const int NOT_ENABLE =  8;
+const int GUIDE_END  = 10;
 
-const int    GUIDE_STEP =  2;
-const int    GUIDE_DIR  =  4;
+const int    GUIDE_STEP =  3;
+const int    GUIDE_DIR  =  6;
 const int    GUIDE_MODE = 32;
 const double GUIDE_1RND  = 40.0; // mm/round
 
-const int    SPOOL_STEP = 16;
-const int    SPOOL_DIR  =  7;
+const int    SPOOL_STEP =  2;
+const int    SPOOL_DIR  =  5;
 const int    SPOOL_MODE = 32;
 
 const double theta_step = 1.8;
